@@ -2,23 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ImageRequest;
+use App\Http\Resources\ImageResource;
 use App\Models\Image;
-use Illuminate\Http\Request;
 
 class ImageController extends Controller
 {
-    public function store(Request $request)
+    public function store(ImageRequest $request)
     {
-        $request->validate([
-            'timeline_id' => 'required|exists:timelines,id',
-            'path' => 'required|string'
-        ]);
 
-        $image = Image::create($request->only(['timeline_id', 'path']));
+        $image = Image::create($request->validated());
 
         return response()->json([
             'message' => 'Image created successfully',
-            'data' => $image
+            'data' => new ImageResource($image),
         ]);
     }
 
@@ -26,8 +23,7 @@ class ImageController extends Controller
     {
         return response()->json([
             'message' => 'List of images',
-            'data' => Image::with('timeline:id')->paginate(10)
+            'data' => ImageResource::collection(Image::with('timeline:id')->paginate(10)),
         ]);
     }
-
 }

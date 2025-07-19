@@ -11,6 +11,7 @@ class Image extends Model
         'timeline_id',
         'path',
     ];
+
     public function timeline(): BelongsTo
     {
         return $this->belongsTo(Timeline::class);

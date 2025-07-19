@@ -2,23 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\HashtagRequest;
+use App\Http\Resources\HashtagResource;
 use App\Models\Hashtag;
-use Illuminate\Http\Request;
 
 class HashtagController extends Controller
 {
-    public function store(Request $request)
+    public function store(HashtagRequest $request)
     {
-        $request->validate([
-            'timeline_id' => 'required|exists:timelines,id',
-            'name' => 'required|string'
-        ]);
 
-        $hashtag = Hashtag::create($request->only(['timeline_id', 'name']));
+        $hashtag = Hashtag::create($request->validated());
 
         return response()->json([
             'message' => 'Hashtag created successfully',
-            'data' => $hashtag
+            'data' => new HashtagResource($hashtag),
         ]);
     }
 
@@ -26,8 +23,7 @@ class HashtagController extends Controller
     {
         return response()->json([
             'message' => 'List of hashtags',
-            'data' => Hashtag::with('timeline:id')->paginate(10)
+            'data' => HashtagResource::collection(Hashtag::with('timeline:id')->paginate(10)),
         ]);
     }
-
 }

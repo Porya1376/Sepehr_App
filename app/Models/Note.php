@@ -11,6 +11,7 @@ class Note extends Model
         'timeline_id',
         'content',
     ];
+
     public function timeline(): BelongsTo
     {
         return $this->belongsTo(Timeline::class);

@@ -11,6 +11,7 @@ class Hashtag extends Model
         'timeline_id',
         'name',
     ];
+
     public function timeline(): BelongsTo
     {
         return $this->belongsTo(Timeline::class);

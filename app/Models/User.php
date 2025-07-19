@@ -4,7 +4,6 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -49,12 +48,12 @@ class User extends Authenticatable
         ];
     }
 
-//    protected static function booted()
-//    {
-//        static::creating(function ($user) {
-//            $user->timeline = now();
-//        });
-//    }
+    //    protected static function booted()
+    //    {
+    //        static::creating(function ($user) {
+    //            $user->timeline = now();
+    //        });
+    //    }
 
     public function timeline(): HasOne
     {

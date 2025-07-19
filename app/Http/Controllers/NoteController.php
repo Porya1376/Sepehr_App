@@ -2,23 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NoteRequest;
+use App\Http\Resources\NoteResource;
 use App\Models\Note;
-use Illuminate\Http\Request;
 
 class NoteController extends Controller
 {
-    public function store(Request $request)
+    public function store(NoteRequest $request)
     {
-        $request->validate([
-            'timeline_id' => 'required|exists:timelines,id',
-            'content' => 'required|string'
-        ]);
 
-        $note = Note::create($request->only(['timeline_id', 'content']));
+        $note = Note::create($request->validated());
 
         return response()->json([
             'message' => 'Note created successfully',
-            'data' => $note
+            'data' => new NoteResource($note),
         ]);
     }
 
@@ -26,8 +23,7 @@ class NoteController extends Controller
     {
         return response()->json([
             'message' => 'List of notes',
-            'data' => Note::with('timeline:id')->paginate(10)
+            'data' => NoteResource::collection(Note::with('timeline:id')->paginate(10)),
         ]);
     }
-
 }

@@ -11,10 +11,10 @@ class AuthController extends Controller
 {
     public function register(RegisterRequest $request)
     {
-        //Validate Data
+        // Validate Data
         $data = $request->validated();
 
-        //Create Data
+        // Create Data
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
@@ -23,7 +23,7 @@ class AuthController extends Controller
 
         $user->timeline()->create();
 
-        //Create Token
+        // Create Token
         return response()->json([
             'message' => 'User registered successfully, timeline created.',
             'user' => $user,
@@ -33,17 +33,17 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
-        //Find User
+        // Find User
         $user = User::where('email', $credentials['email'])->first();
 
-        //Check Password
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+        // Check Password
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             return response()->json([
-                'message' => 'Invalid credentials'
+                'message' => 'Invalid credentials',
             ], 401);
         }
 
-        //Create Token
+        // Create Token
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([

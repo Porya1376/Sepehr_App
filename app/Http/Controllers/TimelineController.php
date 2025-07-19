@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TimelineResource;
 use App\Models\Timeline;
 use Illuminate\Http\Request;
 
@@ -10,7 +11,8 @@ class TimelineController extends Controller
     public function store(Request $request)
     {
         $timeline = $request->user()->timelines()->create();
-        return response()->json($timeline);
+
+        return new TimelineResource($timeline);
     }
 
     public function index()
@@ -19,27 +21,23 @@ class TimelineController extends Controller
             ->latest()
             ->paginate(10);
 
-        return response()->json([
-            'message' => 'Timelines fetched successfully.',
-            'data' => $timelines
-        ]);
+        return TimelineResource::collection($timelines)
+            ->additional(['message' => 'Timelines fetched successfully.']);
     }
 
-    public function show($id)
+    public function show(Timeline $timeline)
     {
-        $timeline = Timeline::with(['user:id,name,email', 'notes', 'hashtags', 'images'])
-            ->find($id);
+        $timeline->load(['user:id,name,email', 'notes', 'hashtags', 'images']);
 
-        if (!$timeline) {
+        if (! $timeline) {
             return response()->json([
-                'message' => 'Timeline not found.'
+                'message' => 'Timeline not found.',
             ], 404);
         }
 
         return response()->json([
             'message' => 'Timeline fetched successfully.',
-            'data' => $timeline
+            'data' => new TimelineResource($timeline),
         ]);
     }
-
 }
